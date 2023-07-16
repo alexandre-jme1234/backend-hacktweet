@@ -14,7 +14,7 @@ router.get("/", function (req, res, next) {
 
 router.get('/signup', (req, res) => {
 	User.find().then(data => {
-      res.json({ users: data });
+      console.log(data)
 	});
 });
 
@@ -22,6 +22,7 @@ router.get('/signup', (req, res) => {
 router.post('/signup', (req, res) => {
   User.findOne({ email: req.body.email })
   .then(data => {
+    console.log('réception route _',data)
     if(data === null) {
       const token = uid2(32);
       const hash = bcrypt.hashSync('password', 10);
@@ -42,20 +43,20 @@ router.post('/signup', (req, res) => {
   });
 })
 
-// router.get('/signin', (req, res) => {
-//   User.findOne({ name: req.body.name }).then(data => {
-//     console.log('password', data.password)
-//     console.log('password req', req.body.password)
-//     if (data && bcrypt.compareSync(req.body.password, data.password)) {
-//       res.json({ result: true, token: data.token });
-//     } else {
-//       res.json({ result: false, error: 'User not found or wrong password' });
-//     }
-//   });
-// })
-
-
 router.get('/signin', (req, res) => {
+  User.findOne({ name: req.body.name }).then(data => {
+    console.log('password', data.password)
+    console.log('password req', req.body.password)
+    if (data && bcrypt.compareSync(req.body.password, data.password)) {
+      res.json({ result: true, token: data.token });
+    } else {
+      res.json({ result: false, error: 'User not found or wrong password' });
+    }
+  });
+})
+
+
+router.post('/signin', (req, res) => {
   if (!checkBody(req.body, ['email', 'password'])) {
     res.json({ result: false, error: 'Missing or empty fields' });
     return;
